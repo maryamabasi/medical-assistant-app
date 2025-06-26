@@ -76,6 +76,21 @@ def chat_patient():
     conversations = Conversation.query.filter_by(patient_id=session.get('user_id')).all()
     return render_template('chat_patient.html', conversations=conversations)
 
+@app.route('/send_message', methods=['GET', 'POST'])
+def send_message():
+    if request.method == 'POST':
+        patient_id = session.get('user_id')
+        doctor_id = request.form['doctor_id']
+        text = request.form['text']
+        
+        new_msg = Message(patient_id=patient_id, doctor_id=doctor_id, text=text)
+        db.session.add(new_msg)
+        db.session.commit()
+        return "Message sent successfully"
+    
+    doctors = Doctor.query.all()
+    return render_template('send_message.html', doctors=doctors)
+
 
 @app.route('/register/patient', methods=['GET', 'POST'])
 def register_patient():
@@ -120,6 +135,12 @@ class Conversation(db.Model):
     patient_id = db.Column(db.Integer, db.ForeignKey('patient.id'))
     message = db.Column(db.Text)
     sender = db.Column(db.String(10))  # 'patient' یا 'bot'
+
+class Message(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    patient_id = db.Column(db.Integer, db.ForeignKey('patient.id'))
+    doctor_id = db.Column(db.Integer, db.ForeignKey('doctor.id'))
+    text = db.Column(db.String(500))
 
 
 if __name__ == '__main__':

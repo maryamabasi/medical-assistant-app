@@ -1,0 +1,14 @@
+<h2>Send Message to Doctor</h2>
+<form method="POST">
+    <label for="doctor">Choose doctor:</label>
+    <select name="doctor_id">
+        {% for doctor in doctors %}
+            <option value="{{ doctor.id }}">{{ doctor.name }}</option>
+        {% endfor %}
+    </select><br><br>
+
+    <label for="text">Message:</label><br>
+    <textarea name="text" rows="4" cols="50"></textarea><br><br>
+
+    <input type="submit" value="Send">
+</form>
