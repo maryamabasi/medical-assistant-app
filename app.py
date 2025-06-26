@@ -1,6 +1,16 @@
 from flask import Flask, render_template, request
+from flask_sqlalchemy import SQLAlchemy
+import os
 
 app = Flask(__name__)
+
+# Config DB
+basedir = os.path.abspath(os.path.dirname(__file__))
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'database.db')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+db = SQLAlchemy(app)
+
 
 @app.route('/')
 def home():
@@ -12,7 +22,10 @@ def register_patient():
         name = request.form['name']
         age = request.form['age']
         symptoms = request.form['symptoms']
-        print(f"New patient: {name}, Age: {age}, Symptoms: {symptoms}")
+        #print(f"New patient: {name}, Age: {age}, Symptoms: {symptoms}")
+        new_patient = Patient(name=name, age=age, symptoms=symptoms)
+        db.session.add(new_patient)
+        db.session.commit()
         return f"Patient {name} registered successfully!"
     return render_template('register_patient.html')
 
@@ -24,6 +37,18 @@ def register_doctor():
         print(f"New doctor: {name}, Specialty: {specialty}")
         return f"Doctor {name} registered successfully!"
     return render_template('register_doctor.html')
+
+class Patient(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100))
+    age = db.Column(db.Integer)
+    symptoms = db.Column(db.String(300))
+
+class Doctor(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100))
+    specialty = db.Column(db.String(100))
+
 
 if __name__ == '__main__':
     app.run(debug=True)
