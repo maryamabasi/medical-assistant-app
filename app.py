@@ -17,6 +17,14 @@ db = SQLAlchemy(app)
 def home():
     return "Welcome to the Medical Chat App!"
 
+@app.route('/dashboard/patient')
+def dashboard_patient():
+    return "Welcome to Patient Dashboard"
+
+@app.route('/dashboard/doctor')
+def dashboard_doctor():
+    return "Welcome to Doctor Dashboard"
+
 
 # بیمار
 @app.route('/login/patient', methods=['GET', 'POST'])
