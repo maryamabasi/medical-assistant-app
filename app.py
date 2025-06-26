@@ -34,7 +34,10 @@ def register_doctor():
     if request.method == 'POST':
         name = request.form['name']
         specialty = request.form['specialty']
-        print(f"New doctor: {name}, Specialty: {specialty}")
+        #print(f"New doctor: {name}, Specialty: {specialty}")
+        new_doctor = Doctor(name=name, email=email)
+        db.session.add(new_doctor)
+        db.session.commit()
         return f"Doctor {name} registered successfully!"
     return render_template('register_doctor.html')
 
