@@ -1,0 +1,11 @@
+<h2>Chat with Medical Bot</h2>
+<div style="border:1px solid gray; padding:10px; margin-bottom:20px;">
+  {% for msg in conversations %}
+    <p><strong>{{ msg.sender }}:</strong> {{ msg.message }}</p>
+  {% endfor %}
+</div>
+
+<form method="POST">
+  <input type="text" name="message" placeholder="Type your symptoms..." required>
+  <input type="submit" value="Send">
+</form>
