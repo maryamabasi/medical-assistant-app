@@ -75,9 +75,10 @@ def register_patient():
 def register_doctor():
     if request.method == 'POST':
         name = request.form['name']
+        email = request.form['email']  # ← اینو اضافه کن
         specialty = request.form['specialty']
         #print(f"New doctor: {name}, Specialty: {specialty}")
-        new_doctor = Doctor(name=name, email=email)
+        new_doctor = Doctor(name=name, email=email,specialty=specialty)
         db.session.add(new_doctor)
         db.session.commit()
         return f"Doctor {name} registered successfully!"
@@ -92,6 +93,7 @@ class Patient(db.Model):
 class Doctor(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100))
+    email = db.Column(db.String(100))  # ← اضافه کن    
     specialty = db.Column(db.String(100))
 
 
