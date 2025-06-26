@@ -1,4 +1,5 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for, flash, session
+
 from flask_sqlalchemy import SQLAlchemy
 import os
 
@@ -15,6 +16,39 @@ db = SQLAlchemy(app)
 @app.route('/')
 def home():
     return "Welcome to the Medical Chat App!"
+
+
+# بیمار
+@app.route('/login/patient', methods=['GET', 'POST'])
+def login_patient():
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+
+        patient = Patient.query.filter_by(email=email, password=password).first()
+        if patient:
+            session['user_type'] = 'patient'
+            session['user_id'] = patient.id
+            return redirect(url_for('dashboard_patient'))
+        else:
+            flash('Invalid email or password')
+    return render_template('login_patient.html')
+
+# دکتر
+@app.route('/login/doctor', methods=['GET', 'POST'])
+def login_doctor():
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+
+        doctor = Doctor.query.filter_by(email=email, password=password).first()
+        if doctor:
+            session['user_type'] = 'doctor'
+            session['user_id'] = doctor.id
+            return redirect(url_for('dashboard_doctor'))
+        else:
+            flash('Invalid email or password')
+    return render_template('login_doctor.html')
 
 @app.route('/register/patient', methods=['GET', 'POST'])
 def register_patient():
