@@ -58,6 +58,25 @@ def login_doctor():
             flash('Invalid email or password')
     return render_template('login_doctor.html')
 
+
+@app.route('/chat/patient', methods=['GET', 'POST'])
+def chat_patient():
+    if request.method == 'POST':
+        message = request.form['message']
+        new_message = Conversation(patient_id=session.get('user_id'), message=message, sender='patient')
+        db.session.add(new_message)
+
+        # پاسخ ساده بات:
+        reply = Conversation(patient_id=session.get('user_id'), message="Thank you, we will contact your doctor.", sender='bot')
+        db.session.add(reply)
+        db.session.commit()
+        
+        return redirect(url_for('chat_patient'))
+
+    conversations = Conversation.query.filter_by(patient_id=session.get('user_id')).all()
+    return render_template('chat_patient.html', conversations=conversations)
+
+
 @app.route('/register/patient', methods=['GET', 'POST'])
 def register_patient():
     if request.method == 'POST':
@@ -95,6 +114,12 @@ class Doctor(db.Model):
     name = db.Column(db.String(100))
     email = db.Column(db.String(100))  # ← اضافه کن    
     specialty = db.Column(db.String(100))
+
+class Conversation(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    patient_id = db.Column(db.Integer, db.ForeignKey('patient.id'))
+    message = db.Column(db.Text)
+    sender = db.Column(db.String(10))  # 'patient' یا 'bot'
 
 
 if __name__ == '__main__':
