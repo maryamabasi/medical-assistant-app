@@ -121,6 +121,17 @@ def chat_patient():
 
     return render_template('chat_patient.html')
 
+@app.route('/chat/doctor', methods=['GET', 'POST'])
+def chat_doctor():
+    messages = [
+        {"sender": "Patient", "message": "I have a headache."},
+        {"sender": "Doctor", "message": "How long have you had it?"}
+    ]
+    if request.method == 'POST':
+        new_message = request.form['message']
+        messages.append({"sender": "Doctor", "message": new_message})
+    return render_template('chat_doctor.html', messages=messages)
+
 # =================== MAIN ===================
 
 if __name__ == '__main__':
